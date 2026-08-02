@@ -20,6 +20,7 @@ export default async function MarquesPage() {
   const { data } = await supabase
     .from("marques")
     .select("id, nom, logo_url")
+    .neq("nom", "Mercedes-Benz")
     .order("nom", { ascending: true })
     .returns<Marque[]>();
 
