@@ -23,7 +23,7 @@ const oswald = Oswald({
 export const metadata: Metadata = {
   title: "AMK Développement | Préparateur automobile - Reprogrammation & Mécanique",
   description:
-    "Atelier de préparation et de reprogrammation moteur, spécialiste reconnu des moteurs TFSI et du groupe VAG, intervenant sur toutes les marques sportives — Audi RS, BMW M, Mercedes-AMG.",
+    "Atelier de préparation et de reprogrammation moteur, spécialiste reconnu des moteurs TFSI et du groupe VAG, intervenant sur toutes les marques sportives — Audi RS, BMW M.",
 };
 
 export default function RootLayout({

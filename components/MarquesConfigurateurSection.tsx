@@ -55,10 +55,10 @@ export function MarquesConfigurateurSection({
           Toutes les marques prises en charge
         </h2>
         <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted normal-case">
-          Spécialiste reconnu du groupe VAG, de BMW M et Mercedes-AMG,
-          l&apos;atelier intervient sur la plupart des marques, sportives ou
-          non. Cliquez sur un logo pour lancer le configurateur avec la
-          marque déjà sélectionnée.
+          Spécialiste reconnu du groupe VAG et de BMW M, l&apos;atelier
+          intervient sur la plupart des marques, sportives ou non. Cliquez
+          sur un logo pour lancer le configurateur avec la marque déjà
+          sélectionnée.
         </p>
 
         <div className="mt-10">

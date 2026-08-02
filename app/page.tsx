@@ -72,8 +72,8 @@ export default async function Home() {
               <strong className="font-semibold text-foreground">
                 spécialiste reconnu des moteurs TFSI et du groupe VAG
               </strong>
-              , intervenant sur toutes les marques sportives — Audi RS, BMW M,
-              Mercedes-AMG…{" "}
+              , intervenant sur toutes les marques sportives — Audi RS, BMW
+              M…{" "}
               <strong className="font-semibold text-foreground">
                 Chaque préparation est validée sur banc de puissance.
               </strong>

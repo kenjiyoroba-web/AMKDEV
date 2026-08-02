@@ -30,8 +30,8 @@ export default function Footer() {
           <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted">
             Atelier de préparation et de reprogrammation moteur, spécialiste
             reconnu des moteurs TFSI et du groupe VAG, intervenant sur toutes
-            les marques sportives — Audi RS, BMW M, Mercedes-AMG. Chaque
-            préparation est validée sur banc de puissance.
+            les marques sportives — Audi RS, BMW M. Chaque préparation est
+            validée sur banc de puissance.
           </p>
           <a
             href="https://www.instagram.com/amkdeveloppement01/"

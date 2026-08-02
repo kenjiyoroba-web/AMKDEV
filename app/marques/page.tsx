@@ -8,7 +8,7 @@ import type { Marque, Realisation } from "@/lib/supabase/types";
 export const metadata: Metadata = {
   title: "Marques | AMK Développement",
   description:
-    "Les marques prises en charge par l'atelier AMK Développement — spécialiste VAG/Audi RS, BMW M, Mercedes-AMG, et bien d'autres.",
+    "Les marques prises en charge par l'atelier AMK Développement — spécialiste VAG/Audi RS, BMW M, et bien d'autres.",
 };
 
 export const revalidate = 300;
@@ -21,6 +21,8 @@ export default async function MarquesPage() {
     .from("marques")
     .select("id, nom, logo_url")
     .neq("nom", "Mercedes-Benz")
+    .neq("nom", "DS Automobiles")
+    .neq("nom", "Rolls-Royce")
     .order("nom", { ascending: true })
     .returns<Marque[]>();
 
