@@ -128,23 +128,32 @@ export function VehiculeConfigurateur({
     ).sort((a, b) => a.localeCompare(b, "fr"));
   }, [marque, realisations]);
 
-  const [modele, setModele] = useState(modeles[0] ?? "");
+  // Aucune présélection : tant que l'utilisateur n'a pas choisi explicitement
+  // un modèle, une génération ou une motorisation, ces étapes restent vides
+  // plutôt que de retomber sur le premier élément de chaque liste.
+  const [modele, setModele] = useState<string | null>(null);
 
   useEffect(() => {
-    setModele((current) => (modeles.includes(current) ? current : modeles[0] ?? ""));
-    // On ne veut réagir qu'aux changements de marque (la liste de modèles en découle).
+    setModele(null);
+    // On ne veut réagir qu'aux changements de marque : un changement de
+    // marque réinitialise systématiquement le modèle choisi.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [marque]);
 
-  const generations = useMemo(() => getGenerations(marque, modele), [marque, modele]);
-  const [generationIndex, setGenerationIndex] = useState(0);
+  const generations = useMemo(
+    () => (modele ? getGenerations(marque, modele) : []),
+    [marque, modele]
+  );
+  const [generationIndex, setGenerationIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    setGenerationIndex(generations.length > 0 ? generations.length - 1 : 0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [marque, modele]);
+    // Une seule génération connue (ou aucune) : rien à choisir, on
+    // « sélectionne » implicitement la seule option possible. Plusieurs
+    // générations : on attend un choix explicite de l'utilisateur.
+    setGenerationIndex(generations.length === 1 ? 0 : null);
+  }, [modele, generations]);
 
-  const currentGeneration = generations[generationIndex] ?? null;
+  const currentGeneration = generationIndex !== null ? generations[generationIndex] ?? null : null;
   const motorisations = currentGeneration?.motorisations ?? [];
 
   const [motorisationNom, setMotorisationNom] = useState<string | null>(null);
@@ -154,7 +163,7 @@ export function VehiculeConfigurateur({
   }, [marque, modele, generationIndex]);
 
   const anneesIndicatifDisponibles = useMemo(
-    () => getAnneesDisponibles(marque, modele),
+    () => (modele ? getAnneesDisponibles(marque, modele) : []),
     [marque, modele]
   );
 
@@ -194,7 +203,7 @@ export function VehiculeConfigurateur({
   // n'affiche pas ce tableau plutôt que de présenter des gains qui ne
   // correspondent pas réellement au moteur demandé.
   const indicatifBrut =
-    realRows.length === 0 && anneeResolue !== null
+    modele && realRows.length === 0 && anneeResolue !== null
       ? getGainIndicatif(marque, modele, anneeResolue)
       : null;
   const indicatif =
@@ -204,19 +213,24 @@ export function VehiculeConfigurateur({
         : null
       : indicatifBrut;
 
-  // On affiche les résultats une fois le modèle choisi, et — s'il existe une
-  // liste de motorisations pour ce modèle — une fois la motorisation
-  // sélectionnée, pour respecter l'ordre marque > modèle > génération >
-  // motorisation demandé.
-  const readyForResults = modele !== "" && (motorisations.length === 0 || motorisationNom !== null);
+  // On n'affiche les résultats qu'une fois toutes les étapes réellement
+  // nécessaires franchies explicitement : modèle choisi, puis génération
+  // choisie si le modèle en a plusieurs, puis motorisation choisie si le
+  // modèle en propose. Rien n'est jamais présélectionné pour sauter une
+  // étape.
+  const generationResolved = generations.length <= 1 || generationIndex !== null;
+  const motorisationResolved = motorisations.length === 0 || motorisationNom !== null;
+  const readyForResults = modele !== null && generationResolved && motorisationResolved;
 
-  const contactHref = `/contact?${new URLSearchParams({
-    sujet: "Devis reprogrammation",
-    marque,
-    modele,
-    ...(anneeResolue !== null ? { annee: String(anneeResolue) } : {}),
-    ...(motorisationNom ? { motorisation: motorisationNom } : {}),
-  }).toString()}`;
+  const contactHref = modele
+    ? `/contact?${new URLSearchParams({
+        sujet: "Devis reprogrammation",
+        marque,
+        modele,
+        ...(anneeResolue !== null ? { annee: String(anneeResolue) } : {}),
+        ...(motorisationNom ? { motorisation: motorisationNom } : {}),
+      }).toString()}`
+    : `/contact?${new URLSearchParams({ sujet: "Devis reprogrammation", marque }).toString()}`;
 
   return (
     <div>
@@ -251,10 +265,13 @@ export function VehiculeConfigurateur({
           </label>
           <select
             id="configurateur-modele"
-            value={modele}
-            onChange={(event) => setModele(event.target.value)}
+            value={modele ?? ""}
+            onChange={(event) => setModele(event.target.value || null)}
             className={selectClass}
           >
+            <option value="" disabled>
+              Sélectionnez un modèle
+            </option>
             {modeles.map((option) => (
               <option key={option} value={option}>
                 {option}
@@ -263,7 +280,7 @@ export function VehiculeConfigurateur({
           </select>
         </div>
 
-        {generations.length > 1 ? (
+        {modele && generations.length > 1 ? (
           <div>
             <label
               htmlFor="configurateur-generation"
@@ -273,10 +290,13 @@ export function VehiculeConfigurateur({
             </label>
             <select
               id="configurateur-generation"
-              value={generationIndex}
+              value={generationIndex ?? ""}
               onChange={(event) => setGenerationIndex(Number(event.target.value))}
               className={selectClass}
             >
+              <option value="" disabled>
+                Sélectionnez une année / génération
+              </option>
               {generations.map((generation, index) => (
                 <option key={generation.label} value={index}>
                   {generation.label}
