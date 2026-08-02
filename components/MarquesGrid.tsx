@@ -5,7 +5,13 @@ import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { Marque } from "@/lib/supabase/types";
 
-export function MarquesGrid({ marques }: { marques: Marque[] }) {
+export function MarquesGrid({
+  marques,
+  onSelect,
+}: {
+  marques: Marque[];
+  onSelect?: (nom: string) => void;
+}) {
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
@@ -34,9 +40,13 @@ export function MarquesGrid({ marques }: { marques: Marque[] }) {
       ) : (
         <div className="mt-8 grid grid-cols-3 gap-px overflow-hidden border border-border bg-border sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
           {filtered.map((marque) => (
-            <div
+            <button
               key={marque.id}
-              className="flex flex-col items-center justify-center gap-2 bg-background px-2 py-4 text-center"
+              type="button"
+              onClick={onSelect ? () => onSelect(marque.nom) : undefined}
+              className={`flex flex-col items-center justify-center gap-2 bg-background px-2 py-4 text-center ${
+                onSelect ? "cursor-pointer transition-colors hover:bg-surface" : ""
+              }`}
             >
               {marque.logo_url ? (
                 <span className="flex h-9 w-9 items-center justify-center bg-white p-1.5">
@@ -56,7 +66,7 @@ export function MarquesGrid({ marques }: { marques: Marque[] }) {
               <span className="text-xs text-foreground/80 normal-case">
                 {marque.nom}
               </span>
-            </div>
+            </button>
           ))}
         </div>
       )}

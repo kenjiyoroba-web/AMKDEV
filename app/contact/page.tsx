@@ -17,9 +17,15 @@ const MAPS_LINK = `https://www.google.com/maps/search/?api=1&query=${encodeURICo
 export default async function ContactPage({
   searchParams,
 }: {
-  searchParams: Promise<{ sujet?: string; marque?: string; modele?: string }>;
+  searchParams: Promise<{
+    sujet?: string;
+    marque?: string;
+    modele?: string;
+    annee?: string;
+    motorisation?: string;
+  }>;
 }) {
-  const { sujet, marque, modele } = await searchParams;
+  const { sujet, marque, modele, annee, motorisation } = await searchParams;
 
   return (
     <>
@@ -105,6 +111,8 @@ export default async function ContactPage({
                 defaultSujet={sujet ?? ""}
                 defaultMarque={marque ?? ""}
                 defaultModele={modele ?? ""}
+                defaultAnnee={annee ?? ""}
+                defaultMotorisation={motorisation ?? ""}
               />
             </div>
           </div>

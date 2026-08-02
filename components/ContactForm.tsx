@@ -9,7 +9,7 @@ import { SujetInput } from "@/components/SujetInput";
 import {
   MARQUES_MODELES,
   MOTORISATIONS_PAR_MODELE,
-  getMotorisations,
+  getMotorisationLabels,
 } from "@/lib/vehicleData";
 
 const MARQUES = Object.keys(MARQUES_MODELES);
@@ -47,21 +47,25 @@ export function ContactForm({
   defaultSujet = "",
   defaultMarque = "",
   defaultModele = "",
+  defaultAnnee = "",
+  defaultMotorisation = "",
 }: {
   defaultSujet?: string;
   defaultMarque?: string;
   defaultModele?: string;
+  defaultAnnee?: string;
+  defaultMotorisation?: string;
 }) {
   const [state, formAction, pending] = useActionState(
     submitDevisRequest,
     initialState
   );
   const [marque, setMarque] = useState(defaultMarque);
-  const [annee, setAnnee] = useState("");
+  const [annee, setAnnee] = useState(defaultAnnee);
   const [modele, setModele] = useState(defaultModele);
-  const [motorisation, setMotorisation] = useState("");
+  const [motorisation, setMotorisation] = useState(defaultMotorisation);
   const modeles = MARQUES_MODELES[marque] ?? [];
-  const motorisations = getMotorisations(marque, modele, annee);
+  const motorisations = getMotorisationLabels(marque, modele, annee);
   const hasGenerationData = Boolean(MOTORISATIONS_PAR_MODELE[marque]?.[modele]);
   const motorisationEmptyMessage =
     hasGenerationData && annee.trim()
@@ -77,7 +81,12 @@ export function ContactForm({
     setModele("");
   }, [marque]);
 
+  const skipNextMotorisationReset = useRef(true);
   useEffect(() => {
+    if (skipNextMotorisationReset.current) {
+      skipNextMotorisationReset.current = false;
+      return;
+    }
     setMotorisation("");
   }, [modele, annee]);
 

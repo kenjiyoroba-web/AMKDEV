@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
-import { Container, Eyebrow, SectionHeading } from "@/components/ui";
-import { MarquesGrid } from "@/components/MarquesGrid";
-import { VehiculeConfigurateur } from "@/components/VehiculeConfigurateur";
+import { Container } from "@/components/ui";
+import { MarquesConfigurateurSection } from "@/components/MarquesConfigurateurSection";
 import type { Marque, Realisation } from "@/lib/supabase/types";
 
 export const metadata: Metadata = {
@@ -35,31 +34,10 @@ export default async function MarquesPage() {
   return (
     <section>
       <Container className="py-16 lg:py-24">
-        <SectionHeading
-          eyebrow="Configurateur"
-          title="Trouvez votre véhicule"
-          description="Choisissez une marque et un modèle parmi ceux pris en charge par l'atelier. Si ce véhicule est déjà passé au banc, les gains réels de puissance et de couple s'affichent étage par étage ; sinon, demandez un devis gratuit pour une estimation."
+        <MarquesConfigurateurSection
+          marques={data ?? []}
+          realisations={realisations ?? []}
         />
-
-        <div className="mt-10">
-          <VehiculeConfigurateur realisations={realisations ?? []} />
-        </div>
-
-        <div className="mt-20">
-          <Eyebrow>Marques</Eyebrow>
-          <h2 className="mt-4 text-4xl font-bold leading-[1.05] sm:text-5xl">
-            Toutes les marques prises en charge
-          </h2>
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted normal-case">
-            Spécialiste reconnu du groupe VAG, de BMW M et Mercedes-AMG,
-            l&apos;atelier intervient sur la plupart des marques, sportives
-            ou non.
-          </p>
-
-          <div className="mt-10">
-            <MarquesGrid marques={data ?? []} />
-          </div>
-        </div>
       </Container>
     </section>
   );

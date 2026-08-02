@@ -4,7 +4,11 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { VehiclePlaceholder } from "@/components/VehiclePlaceholder";
 import { Button } from "@/components/ui";
-import { MARQUES_MODELES } from "@/lib/vehicleData";
+import {
+  MARQUES_MODELES,
+  getGenerations,
+  type Carburant,
+} from "@/lib/vehicleData";
 import {
   getAnneesDisponibles,
   getGainIndicatif,
@@ -15,6 +19,8 @@ import type { Realisation } from "@/lib/supabase/types";
 
 const selectClass =
   "w-full border border-border bg-surface px-4 py-3 text-sm text-foreground focus:border-accent focus:outline-none normal-case";
+
+const CARBURANT_ORDER: Carburant[] = ["Essence", "Diesel", "Électrique"];
 
 function GainCell({
   origine,
@@ -35,10 +41,62 @@ function GainCell({
   );
 }
 
+function MotorisationPicker({
+  motorisations,
+  selected,
+  onSelect,
+}: {
+  motorisations: { nom: string; carburant: Carburant; chOrigine?: number }[];
+  selected: string | null;
+  onSelect: (nom: string) => void;
+}) {
+  const groups = CARBURANT_ORDER.map((carburant) => ({
+    carburant,
+    items: motorisations.filter((motorisation) => motorisation.carburant === carburant),
+  })).filter((group) => group.items.length > 0);
+
+  if (groups.length === 0) return null;
+
+  return (
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {groups.map((group) => (
+        <div key={group.carburant}>
+          <p className="mb-3 font-heading text-xs tracking-[0.15em] text-muted">
+            {group.carburant}
+          </p>
+          <div className="flex flex-col gap-2">
+            {group.items.map((motorisation) => (
+              <button
+                key={motorisation.nom}
+                type="button"
+                onClick={() => onSelect(motorisation.nom)}
+                className={`flex items-center justify-between gap-3 border px-4 py-3 text-left text-sm normal-case transition-colors ${
+                  selected === motorisation.nom
+                    ? "border-accent bg-accent-soft text-foreground"
+                    : "border-border bg-surface text-foreground/90 hover:border-accent/50"
+                }`}
+              >
+                <span>{motorisation.nom}</span>
+                {motorisation.chOrigine ? (
+                  <span className="shrink-0 text-xs text-muted">{motorisation.chOrigine} ch</span>
+                ) : null}
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function VehiculeConfigurateur({
   realisations,
+  marque,
+  onMarqueChange,
 }: {
   realisations: Realisation[];
+  marque: string;
+  onMarqueChange: (marque: string) => void;
 }) {
   // Les intitulés dans `realisations` viennent des légendes Instagram et sont
   // parfois plus précis que la liste générique (ex. "RS3 8V2", "Polo WRC",
@@ -56,7 +114,7 @@ export function VehiculeConfigurateur({
       ).sort((a, b) => a.localeCompare(b, "fr")),
     [realisations]
   );
-  const [marque, setMarque] = useState(marques[0] ?? "");
+
   const modeles = useMemo(() => {
     const fromRealisations = realisations
       .filter((r) => r.marque === marque)
@@ -69,15 +127,55 @@ export function VehiculeConfigurateur({
       ])
     ).sort((a, b) => a.localeCompare(b, "fr"));
   }, [marque, realisations]);
+
   const [modele, setModele] = useState(modeles[0] ?? "");
 
   useEffect(() => {
-    if (!modeles.includes(modele)) {
-      setModele(modeles[0] ?? "");
-    }
+    setModele((current) => (modeles.includes(current) ? current : modeles[0] ?? ""));
     // On ne veut réagir qu'aux changements de marque (la liste de modèles en découle).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [marque]);
+
+  const generations = useMemo(() => getGenerations(marque, modele), [marque, modele]);
+  const [generationIndex, setGenerationIndex] = useState(0);
+
+  useEffect(() => {
+    setGenerationIndex(generations.length > 0 ? generations.length - 1 : 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [marque, modele]);
+
+  const currentGeneration = generations[generationIndex] ?? null;
+  const motorisations = currentGeneration?.motorisations ?? [];
+
+  const [motorisationNom, setMotorisationNom] = useState<string | null>(null);
+
+  useEffect(() => {
+    setMotorisationNom(null);
+  }, [marque, modele, generationIndex]);
+
+  const anneesIndicatifDisponibles = useMemo(
+    () => getAnneesDisponibles(marque, modele),
+    [marque, modele]
+  );
+
+  // Le passage au banc et l'estimation indicative sont indexés par année
+  // exacte : on résout automatiquement l'année la plus pertinente au sein de
+  // la génération choisie (la plus récente pour laquelle on a une donnée),
+  // sans imposer une 5e étape à l'utilisateur.
+  const anneeResolue = useMemo(() => {
+    if (!currentGeneration) return null;
+    const candidates = anneesIndicatifDisponibles.filter((year) => {
+      if (currentGeneration.yearFrom !== undefined && year < currentGeneration.yearFrom) {
+        return false;
+      }
+      if (currentGeneration.yearTo !== undefined && year > currentGeneration.yearTo) {
+        return false;
+      }
+      return true;
+    });
+    if (candidates.length > 0) return candidates[candidates.length - 1];
+    return currentGeneration.yearTo ?? currentGeneration.yearFrom ?? null;
+  }, [currentGeneration, anneesIndicatifDisponibles]);
 
   const realRows = useMemo(
     () =>
@@ -87,25 +185,37 @@ export function VehiculeConfigurateur({
     [realisations, marque, modele]
   );
 
-  const anneesDisponibles = useMemo(
-    () => (realRows.length === 0 ? getAnneesDisponibles(marque, modele) : []),
-    [marque, modele, realRows.length]
-  );
-  const [annee, setAnnee] = useState<number | null>(null);
+  const selectedMotorisation = motorisations.find((m) => m.nom === motorisationNom) ?? null;
 
-  useEffect(() => {
-    setAnnee(anneesDisponibles.length > 0 ? anneesDisponibles[anneesDisponibles.length - 1] : null);
-  }, [marque, modele, anneesDisponibles]);
-
-  const indicatif =
-    realRows.length === 0 && annee !== null
-      ? getGainIndicatif(marque, modele, annee)
+  // Le jeu de données indicatif ne connaît qu'une ligne par marque/modèle/
+  // année (pas par motorisation précise) : si son carburant ne correspond
+  // pas à la motorisation choisie par l'utilisateur (ex. moteur essence
+  // sélectionné mais seule une ligne diesel existe pour cette année), on
+  // n'affiche pas ce tableau plutôt que de présenter des gains qui ne
+  // correspondent pas réellement au moteur demandé.
+  const indicatifBrut =
+    realRows.length === 0 && anneeResolue !== null
+      ? getGainIndicatif(marque, modele, anneeResolue)
       : null;
+  const indicatif =
+    indicatifBrut && selectedMotorisation && indicatifBrut.carburant
+      ? indicatifBrut.carburant === selectedMotorisation.carburant
+        ? indicatifBrut
+        : null
+      : indicatifBrut;
+
+  // On affiche les résultats une fois le modèle choisi, et — s'il existe une
+  // liste de motorisations pour ce modèle — une fois la motorisation
+  // sélectionnée, pour respecter l'ordre marque > modèle > génération >
+  // motorisation demandé.
+  const readyForResults = modele !== "" && (motorisations.length === 0 || motorisationNom !== null);
 
   const contactHref = `/contact?${new URLSearchParams({
     sujet: "Devis reprogrammation",
     marque,
     modele,
+    ...(anneeResolue !== null ? { annee: String(anneeResolue) } : {}),
+    ...(motorisationNom ? { motorisation: motorisationNom } : {}),
   }).toString()}`;
 
   return (
@@ -116,12 +226,12 @@ export function VehiculeConfigurateur({
             htmlFor="configurateur-marque"
             className="mb-2 block font-heading text-xs tracking-[0.15em] text-muted"
           >
-            Marque
+            1. Marque
           </label>
           <select
             id="configurateur-marque"
             value={marque}
-            onChange={(event) => setMarque(event.target.value)}
+            onChange={(event) => onMarqueChange(event.target.value)}
             className={selectClass}
           >
             {marques.map((option) => (
@@ -137,7 +247,7 @@ export function VehiculeConfigurateur({
             htmlFor="configurateur-modele"
             className="mb-2 block font-heading text-xs tracking-[0.15em] text-muted"
           >
-            Modèle
+            2. Modèle
           </label>
           <select
             id="configurateur-modele"
@@ -153,23 +263,23 @@ export function VehiculeConfigurateur({
           </select>
         </div>
 
-        {anneesDisponibles.length > 0 ? (
+        {generations.length > 1 ? (
           <div>
             <label
-              htmlFor="configurateur-annee"
+              htmlFor="configurateur-generation"
               className="mb-2 block font-heading text-xs tracking-[0.15em] text-muted"
             >
-              Année
+              3. Année / Génération
             </label>
             <select
-              id="configurateur-annee"
-              value={annee ?? ""}
-              onChange={(event) => setAnnee(Number(event.target.value))}
+              id="configurateur-generation"
+              value={generationIndex}
+              onChange={(event) => setGenerationIndex(Number(event.target.value))}
               className={selectClass}
             >
-              {anneesDisponibles.map((option) => (
-                <option key={option} value={option}>
-                  {option}
+              {generations.map((generation, index) => (
+                <option key={generation.label} value={index}>
+                  {generation.label}
                 </option>
               ))}
             </select>
@@ -177,7 +287,20 @@ export function VehiculeConfigurateur({
         ) : null}
       </div>
 
-      {realRows.length > 0 ? (
+      {motorisations.length > 0 ? (
+        <div className="mt-8">
+          <p className="mb-4 font-heading text-xs tracking-[0.15em] text-muted">
+            {generations.length > 1 ? "4. " : "3. "}Motorisation
+          </p>
+          <MotorisationPicker
+            motorisations={motorisations}
+            selected={motorisationNom}
+            onSelect={setMotorisationNom}
+          />
+        </div>
+      ) : null}
+
+      {!readyForResults ? null : realRows.length > 0 ? (
         <div className="mt-8 overflow-x-auto border border-border">
           <table className="w-full min-w-[720px] border-collapse text-sm normal-case">
             <thead>
@@ -243,10 +366,10 @@ export function VehiculeConfigurateur({
         <div className="mt-8">
           <p className="text-sm normal-case">
             <span className="font-heading text-xs tracking-[0.15em] text-accent">
-              Motorisation {annee}
+              Motorisation {anneeResolue}
             </span>
             <span className="ml-2 text-foreground/90">
-              {indicatif.motorisation ?? "—"}
+              {motorisationNom ?? indicatif.motorisation ?? "—"}
             </span>
             {indicatif.carburant ? (
               <span className="text-muted"> · {indicatif.carburant}</span>
