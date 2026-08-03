@@ -50,7 +50,7 @@ const SERVICES = [
     title: "Pièces performance",
     description:
       "Fourniture et montage de pièces performance choisies avec vous, adaptées à votre usage.",
-    items: ["Cales de carrossage", "Ressorts courts & suspension", "Gros freins & jantes"],
+    items: ["Cales de carrossage", "Ressorts courts & suspension", "Kit Gros freins & jantes"],
     image: "/prestations/pieces-performance.jpg",
   },
 ];
