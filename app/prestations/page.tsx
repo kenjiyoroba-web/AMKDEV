@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Cpu, Flame, Fuel, Gauge, Wrench } from "lucide-react";
+import { Cpu, Disc3, Flame, Fuel, Gauge, Wrench } from "lucide-react";
 import { Button, Container, Eyebrow, SectionHeading } from "@/components/ui";
 
 export const metadata: Metadata = {
@@ -44,6 +44,15 @@ const SERVICES = [
     items: ["Courbes puissance & couple", "Diagnostic électronique", "Compte-rendu détaillé"],
     image: "/prestations/banc-diagnostic.jpg",
   },
+  {
+    icon: Disc3,
+    label: "Équipement",
+    title: "Pièces performance",
+    description:
+      "Fourniture et montage de pièces performance choisies avec vous, adaptées à votre usage.",
+    items: ["Ligne d'échappement", "Ressorts courts & suspension", "Gros freins & jantes"],
+    image: "/prestations/pieces-performance.jpg",
+  },
 ];
 
 const FLEXFUEL_ITEMS = [
@@ -64,11 +73,13 @@ export default function PrestationsPage() {
             description="Un seul fil conducteur : des interventions justes, des pièces de qualité et des résultats mesurés — pas annoncés."
           />
 
-          <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
-            {SERVICES.map((service) => (
+          <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-5">
+            {SERVICES.map((service, index) => (
               <div
                 key={service.title}
-                className="group relative flex flex-col overflow-hidden bg-background p-6"
+                className={`group relative flex flex-col overflow-hidden bg-background p-6 ${
+                  index === SERVICES.length - 1 ? "sm:col-span-2 lg:col-span-1" : ""
+                }`}
               >
                 {service.image ? (
                   <>
