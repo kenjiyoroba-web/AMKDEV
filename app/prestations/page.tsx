@@ -110,8 +110,17 @@ export default function PrestationsPage() {
             ))}
           </div>
 
-          <div className="mt-12 border border-accent/40 bg-accent-soft p-8 lg:p-10">
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.3fr_auto_1fr] lg:items-center">
+          <div className="group relative mt-12 overflow-hidden border border-accent/40 p-8 lg:p-10">
+            <Image
+              src="/prestations/flexfuel-e85.jpg"
+              alt=""
+              fill
+              sizes="100vw"
+              className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-background/85 transition-colors duration-500 group-hover:bg-background/70" />
+
+            <div className="relative grid grid-cols-1 gap-8 lg:grid-cols-[1.3fr_auto_1fr] lg:items-center">
               <div>
                 <Eyebrow>Carburant · Superéthanol</Eyebrow>
                 <div className="mt-4 flex items-center gap-4">
