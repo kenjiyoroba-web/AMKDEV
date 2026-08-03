@@ -110,7 +110,7 @@ export default function PrestationsPage() {
             ))}
           </div>
 
-          <div className="group relative mt-12 overflow-hidden border border-accent/40 p-8 lg:p-10">
+          <div className="group relative mt-12 min-h-[420px] overflow-hidden border border-accent/40 p-8 lg:min-h-[480px] lg:p-10">
             <Image
               src="/prestations/flexfuel-e85.jpg"
               alt=""
