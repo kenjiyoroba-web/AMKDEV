@@ -69,73 +69,89 @@ export default async function RealisationsPage() {
     .returns<Realisation[]>();
 
   return (
-    <section>
-      <Container className="py-16 lg:py-24">
-        <SectionHeading
-          eyebrow="L'atelier"
-          title="De la révision au moteur forgé"
-          description="Un parcours en 4 stages, du plus accessible au plus radical."
+    <>
+      <section className="relative overflow-hidden border-b border-border">
+        <Image
+          src="/forfaits-pieces.jpg"
+          alt="Pièces performance prêtes au montage à l'atelier AMK Développement"
+          fill
+          sizes="100vw"
+          className="object-cover"
+          priority
         />
+        <div className="absolute inset-0 bg-background/75" />
 
-        <div className="mt-12">
-          <HorizontalScroller>
-            {STAGES.map(({ stage, icon: Icon, title, description, tag, image }) => (
-              <div
-                key={stage}
-                className="group relative min-w-[300px] shrink-0 grow basis-[300px] snap-start overflow-hidden bg-background p-6"
-              >
-                {image ? (
-                  <>
-                    <Image
-                      src={image}
-                      alt=""
-                      fill
-                      sizes="300px"
-                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-background/85 transition-colors duration-500 group-hover:bg-background/70" />
-                  </>
-                ) : null}
+        <Container className="relative py-20 lg:py-28">
+          <SectionHeading
+            eyebrow="L'atelier"
+            title="De la révision au moteur forgé"
+            description="Un parcours en 4 stages, du plus accessible au plus radical."
+          />
+        </Container>
+      </section>
 
-                <div className="relative">
-                  <div className="flex items-center justify-between">
-                    <span className="font-heading text-2xl text-accent">
-                      {stage}
-                    </span>
-                    <span className="flex h-9 w-9 items-center justify-center border border-border text-accent">
-                      <Icon className="h-4 w-4" strokeWidth={1.5} />
-                    </span>
+      <section>
+        <Container className="py-16 lg:py-24">
+          <div className="mt-12">
+            <HorizontalScroller>
+              {STAGES.map(({ stage, icon: Icon, title, description, tag, image }) => (
+                <div
+                  key={stage}
+                  className="group relative min-w-[300px] shrink-0 grow basis-[300px] snap-start overflow-hidden bg-background p-6"
+                >
+                  {image ? (
+                    <>
+                      <Image
+                        src={image}
+                        alt=""
+                        fill
+                        sizes="300px"
+                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-background/85 transition-colors duration-500 group-hover:bg-background/70" />
+                    </>
+                  ) : null}
+
+                  <div className="relative">
+                    <div className="flex items-center justify-between">
+                      <span className="font-heading text-2xl text-accent">
+                        {stage}
+                      </span>
+                      <span className="flex h-9 w-9 items-center justify-center border border-border text-accent">
+                        <Icon className="h-4 w-4" strokeWidth={1.5} />
+                      </span>
+                    </div>
+
+                    <h3 className="mt-4 font-heading text-lg">{title}</h3>
+                    <p className="mt-3 text-sm leading-relaxed text-muted normal-case">
+                      {description}
+                    </p>
+
+                    <p className="mt-6 border-t border-border pt-4 font-heading text-xs tracking-[0.15em] text-muted">
+                      {tag}
+                    </p>
                   </div>
-
-                  <h3 className="mt-4 font-heading text-lg">{title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted normal-case">
-                    {description}
-                  </p>
-
-                  <p className="mt-6 border-t border-border pt-4 font-heading text-xs tracking-[0.15em] text-muted">
-                    {tag}
-                  </p>
                 </div>
-              </div>
-            ))}
-          </HorizontalScroller>
-        </div>
-
-        <div className="mt-20">
-          <Eyebrow>Réalisations</Eyebrow>
-          <h2 className="mt-4 text-4xl font-bold leading-[1.05] sm:text-5xl">
-            Elles sont passées par l&apos;atelier
-          </h2>
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted normal-case">
-            Préparées pour la performance, construites pour durer : voici
-            quelques véhicules sortis de l&apos;atelier.
-          </p>
-
-          <div className="mt-10">
-            <RealisationsGallery realisations={data ?? []} />
+              ))}
+            </HorizontalScroller>
           </div>
-        </div>
-      </Container>
-    </section>
+
+          <div className="mt-20">
+            <Eyebrow>Réalisations</Eyebrow>
+            <h2 className="mt-4 text-4xl font-bold leading-[1.05] sm:text-5xl">
+              Elles sont passées par l&apos;atelier
+            </h2>
+            <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted normal-case">
+              Préparées pour la performance, construites pour durer : voici
+              quelques véhicules sortis de l&apos;atelier.
+            </p>
+
+            <div className="mt-10">
+              <RealisationsGallery realisations={data ?? []} />
+            </div>
+          </div>
+        </Container>
+      </section>
+    </>
   );
 }
