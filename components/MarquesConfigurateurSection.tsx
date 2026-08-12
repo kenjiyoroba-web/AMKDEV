@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Eyebrow, SectionHeading } from "@/components/ui";
 import { MarquesGrid } from "@/components/MarquesGrid";
 import { VehiculeConfigurateur } from "@/components/VehiculeConfigurateur";
+import { Reveal } from "@/components/Reveal";
 import type { Marque, Realisation } from "@/lib/supabase/types";
 
 export function MarquesConfigurateurSection({
@@ -49,7 +50,7 @@ export function MarquesConfigurateurSection({
         </div>
       ) : null}
 
-      <div className={selectedMarque ? "mt-20" : ""}>
+      <Reveal className={selectedMarque ? "mt-20" : ""}>
         <Eyebrow>Marques</Eyebrow>
         <h2 className="mt-4 text-4xl font-bold leading-[1.05] sm:text-5xl">
           Toutes les marques prises en charge
@@ -64,7 +65,7 @@ export function MarquesConfigurateurSection({
         <div className="mt-10">
           <MarquesGrid marques={marques} onSelect={handleMarqueClick} />
         </div>
-      </div>
+      </Reveal>
     </>
   );
 }

@@ -7,6 +7,8 @@ import { Button, Container, Eyebrow } from "@/components/ui";
 import { BrandMarquee } from "@/components/BrandMarquee";
 import { PowerCurveChart } from "@/components/PowerCurveChart";
 import { VehiclePlaceholder } from "@/components/VehiclePlaceholder";
+import { Reveal } from "@/components/Reveal";
+import { Counter } from "@/components/Counter";
 import type { Realisation } from "@/lib/supabase/types";
 
 const SECTIONS = [
@@ -130,11 +132,15 @@ export default async function Home() {
               <div className="mt-4 flex items-center justify-between border-t border-border pt-4 text-sm normal-case">
                 <span className="text-muted">
                   {featured?.ch_origine ?? 600} →{" "}
-                  <span className="text-accent">{featured?.ch_final ?? 744} ch</span>
+                  <span className="text-accent">
+                    <Counter value={featured?.ch_final ?? 744} suffix=" ch" />
+                  </span>
                   {featured?.couple_nm ? (
                     <>
                       {" · "}
-                      <span className="text-foreground">{featured.couple_nm} Nm</span>
+                      <span className="text-foreground">
+                        <Counter value={featured.couple_nm} suffix=" Nm" />
+                      </span>
                     </>
                   ) : null}
                 </span>
@@ -169,30 +175,33 @@ export default async function Home() {
 
       <section className="border-b border-border">
         <Container className="py-16 lg:py-24">
-          <Eyebrow>L&apos;atelier en un coup d&apos;œil</Eyebrow>
-          <h2 className="mt-4 max-w-2xl text-3xl font-bold leading-tight sm:text-4xl">
-            De la révision au moteur forgé
-          </h2>
+          <Reveal>
+            <Eyebrow>L&apos;atelier en un coup d&apos;œil</Eyebrow>
+            <h2 className="mt-4 max-w-2xl text-3xl font-bold leading-tight sm:text-4xl">
+              De la révision au moteur forgé
+            </h2>
+          </Reveal>
 
           <div className="mt-10 grid grid-cols-1 gap-px overflow-hidden border border-border bg-border sm:grid-cols-3">
-            {SECTIONS.map(({ href, icon: Icon, title, description }) => (
-              <Link
-                key={href}
-                href={href}
-                className="group flex flex-col justify-between gap-6 bg-background p-6 transition-colors hover:bg-surface"
-              >
-                <Icon className="h-6 w-6 text-accent" strokeWidth={1.5} />
-                <div>
-                  <h3 className="font-heading text-lg">{title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted normal-case">
-                    {description}
-                  </p>
-                </div>
-                <span className="flex items-center gap-2 font-heading text-xs tracking-wide text-accent">
-                  Découvrir
-                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                </span>
-              </Link>
+            {SECTIONS.map(({ href, icon: Icon, title, description }, index) => (
+              <Reveal key={href} delay={index * 100}>
+                <Link
+                  href={href}
+                  className="group flex h-full flex-col justify-between gap-6 bg-background p-6 transition-colors hover:bg-surface"
+                >
+                  <Icon className="h-6 w-6 text-accent" strokeWidth={1.5} />
+                  <div>
+                    <h3 className="font-heading text-lg">{title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted normal-case">
+                      {description}
+                    </p>
+                  </div>
+                  <span className="flex items-center gap-2 font-heading text-xs tracking-wide text-accent">
+                    Découvrir
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                  </span>
+                </Link>
+              </Reveal>
             ))}
           </div>
         </Container>
@@ -200,7 +209,7 @@ export default async function Home() {
 
       <section>
         <Container className="py-16 lg:py-24">
-          <div className="flex flex-col items-start justify-between gap-8 border border-accent/40 bg-accent-soft px-8 py-12 sm:flex-row sm:items-center">
+          <Reveal className="flex flex-col items-start justify-between gap-8 border border-accent/40 bg-accent-soft px-8 py-12 sm:flex-row sm:items-center">
             <div>
               <h2 className="text-3xl font-bold leading-tight sm:text-4xl">
                 Un projet de préparation ?
@@ -213,7 +222,7 @@ export default async function Home() {
             <Button href="/contact" variant="primary" className="shrink-0">
               Prendre rendez-vous
             </Button>
-          </div>
+          </Reveal>
         </Container>
       </section>
     </>

@@ -5,6 +5,8 @@ import { X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { PowerCurveChart } from "@/components/PowerCurveChart";
 import { VehiclePlaceholder } from "@/components/VehiclePlaceholder";
+import { Reveal } from "@/components/Reveal";
+import { Counter } from "@/components/Counter";
 import type { Realisation } from "@/lib/supabase/types";
 
 const STAGE_FILTERS = [0, 1, 2, 3, 4] as const;
@@ -61,103 +63,117 @@ export function RealisationsGallery({
         </p>
       ) : (
         <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {filtered.map((item) => (
-            <div key={item.id} className="border border-border bg-surface">
-              <div className="p-6 pb-0">
-                <div className="group relative mx-auto aspect-[4/5] w-full max-w-[330px] overflow-hidden">
-                  {item.image_url ? (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setLightbox({
-                          src: item.image_url as string,
-                          alt: `${item.marque} ${item.modele}`,
-                        })
-                      }
-                      className="absolute inset-0 h-full w-full cursor-zoom-in"
-                      aria-label={`Agrandir la photo ${item.marque} ${item.modele}`}
-                    >
-                      <Image
-                        src={item.image_url}
-                        alt={`${item.marque} ${item.modele}`}
-                        fill
-                        sizes="330px"
-                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                      />
-                    </button>
-                  ) : (
-                    <VehiclePlaceholder className="h-full w-full" />
-                  )}
-                  <span className="pointer-events-none absolute left-3 top-3 bg-accent px-3 py-1.5 font-heading text-xs tracking-wide text-white">
-                    Stage {item.stage}
-                  </span>
-                </div>
-              </div>
-
-              <div className="p-6">
-                <div className="flex items-baseline justify-between">
-                  <span className="font-heading text-xs tracking-[0.2em] text-muted">
-                    Passage au banc
-                  </span>
-                  <span className="font-heading text-sm">
-                    {item.marque} {item.modele} · Stage {item.stage}
-                  </span>
+          {filtered.map((item, itemIndex) => (
+            <Reveal key={item.id} delay={(itemIndex % 2) * 80}>
+              <div className="border border-border bg-surface">
+                <div className="p-6 pb-0">
+                  <div className="group relative mx-auto aspect-[4/5] w-full max-w-[330px] overflow-hidden">
+                    {item.image_url ? (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setLightbox({
+                            src: item.image_url as string,
+                            alt: `${item.marque} ${item.modele}`,
+                          })
+                        }
+                        className="absolute inset-0 h-full w-full cursor-zoom-in"
+                        aria-label={`Agrandir la photo ${item.marque} ${item.modele}`}
+                      >
+                        <Image
+                          src={item.image_url}
+                          alt={`${item.marque} ${item.modele}`}
+                          fill
+                          sizes="330px"
+                          className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                        />
+                      </button>
+                    ) : (
+                      <VehiclePlaceholder className="h-full w-full" />
+                    )}
+                    <span className="pointer-events-none absolute left-3 top-3 bg-accent px-3 py-1.5 font-heading text-xs tracking-wide text-white">
+                      Stage {item.stage}
+                    </span>
+                  </div>
                 </div>
 
-                <PowerCurveChart
-                  chOrigine={item.ch_origine}
-                  chFinal={item.ch_final}
-                  stageLabel={`Stage ${item.stage}`}
-                  className="mt-4 w-full"
-                />
+                <div className="p-6">
+                  <div className="flex items-baseline justify-between">
+                    <span className="font-heading text-xs tracking-[0.2em] text-muted">
+                      Passage au banc
+                    </span>
+                    <span className="font-heading text-sm">
+                      {item.marque} {item.modele} · Stage {item.stage}
+                    </span>
+                  </div>
 
-                <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-border pt-4 text-sm normal-case">
-                  <span className="text-muted">
-                    {item.ch_origine} → <span className="text-accent">{item.ch_final} ch</span>
-                    {item.delta_ch ? (
-                      <span className="text-accent"> (+{item.delta_ch})</span>
-                    ) : null}
-                    {item.carburant ? (
-                      <span className="text-muted"> ({item.carburant})</span>
-                    ) : null}
-                  </span>
-                  {item.couple_nm ? (
+                  <PowerCurveChart
+                    chOrigine={item.ch_origine}
+                    chFinal={item.ch_final}
+                    stageLabel={`Stage ${item.stage}`}
+                    className="mt-4 w-full"
+                  />
+
+                  <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-border pt-4 text-sm normal-case">
                     <span className="text-muted">
-                      Couple : <span className="text-foreground">{item.couple_nm} Nm</span>
-                      {item.delta_couple_nm ? (
-                        <span className="text-accent"> (+{item.delta_couple_nm})</span>
+                      {item.ch_origine} →{" "}
+                      <span className="text-accent">
+                        <Counter value={item.ch_final} suffix=" ch" />
+                      </span>
+                      {item.delta_ch ? (
+                        <span className="text-accent">
+                          {" "}
+                          (+<Counter value={item.delta_ch} />)
+                        </span>
+                      ) : null}
+                      {item.carburant ? (
+                        <span className="text-muted"> ({item.carburant})</span>
                       ) : null}
                     </span>
-                  ) : null}
-                  {item.zero_cent ? (
-                    <span className="text-muted">
-                      0-100 : <span className="text-foreground">{item.zero_cent}s</span>
-                    </span>
-                  ) : null}
-                  {item.cent_deux_cent ? (
-                    <span className="text-muted">
-                      100-200 : <span className="text-foreground">{item.cent_deux_cent}s</span>
-                    </span>
+                    {item.couple_nm ? (
+                      <span className="text-muted">
+                        Couple :{" "}
+                        <span className="text-foreground">
+                          <Counter value={item.couple_nm} suffix=" Nm" />
+                        </span>
+                        {item.delta_couple_nm ? (
+                          <span className="text-accent">
+                            {" "}
+                            (+<Counter value={item.delta_couple_nm} />)
+                          </span>
+                        ) : null}
+                      </span>
+                    ) : null}
+                    {item.zero_cent ? (
+                      <span className="text-muted">
+                        0-100 : <span className="text-foreground">{item.zero_cent}s</span>
+                      </span>
+                    ) : null}
+                    {item.cent_deux_cent ? (
+                      <span className="text-muted">
+                        100-200 : <span className="text-foreground">{item.cent_deux_cent}s</span>
+                      </span>
+                    ) : null}
+                  </div>
+
+                  {item.description ? (
+                    <ul className="mt-3 flex flex-col gap-1.5 text-sm leading-relaxed text-muted normal-case">
+                      {item.description
+                        .replace(/\.$/, "")
+                        .split(",")
+                        .map((part) => part.trim())
+                        .filter(Boolean)
+                        .map((part, partIndex) => (
+                          <li key={partIndex} className="flex gap-2">
+                            <span className="text-accent">•</span>
+                            <span>{part}</span>
+                          </li>
+                        ))}
+                    </ul>
                   ) : null}
                 </div>
-
-                {item.description ? (
-                  <ul className="mt-3 flex flex-col gap-1.5 text-sm leading-relaxed text-muted normal-case">
-                    {item.description
-                      .replace(/\.$/, "")
-                      .split(",")
-                      .map((part) => part.trim())
-                      .filter(Boolean)
-                      .map((part, index) => (
-                        <li key={index} className="flex gap-2">
-                          <span className="text-accent">•</span>
-                          <span>{part}</span>
-                        </li>
-                      ))}
-                  </ul>
-                ) : null}
               </div>
-            </div>
+            </Reveal>
           ))}
         </div>
       )}

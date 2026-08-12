@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Container, SectionHeading } from "@/components/ui";
+import { Reveal } from "@/components/Reveal";
 
 export const metadata: Metadata = {
   title: "Partenaires | AMK Développement",
@@ -29,10 +30,10 @@ export default function PartenairesPage() {
         />
 
         <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {PARTENAIRES.map((partenaire) => (
+          {PARTENAIRES.map((partenaire, index) => (
+            <Reveal key={partenaire.nom} delay={index * 80}>
             <div
-              key={partenaire.nom}
-              className="flex flex-col border border-border bg-surface text-center"
+              className="flex h-full flex-col border border-border bg-surface text-center"
             >
               {partenaire.photo ? (
                 <Link
@@ -87,6 +88,7 @@ export default function PartenairesPage() {
                 </span>
               </div>
             </div>
+            </Reveal>
           ))}
         </div>
       </Container>

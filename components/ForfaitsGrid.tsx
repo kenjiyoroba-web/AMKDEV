@@ -3,6 +3,8 @@
 import { Check } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Button, Container } from "@/components/ui";
+import { Reveal } from "@/components/Reveal";
+import { Counter } from "@/components/Counter";
 import type { Forfait } from "@/lib/supabase/types";
 
 export function ForfaitsGrid({ forfaits }: { forfaits: Forfait[] }) {
@@ -31,15 +33,15 @@ export function ForfaitsGrid({ forfaits }: { forfaits: Forfait[] }) {
   return (
     <div className={selectedNoms.length > 0 ? "pb-28" : undefined}>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
-        {forfaits.map((forfait) => {
+        {forfaits.map((forfait, index) => {
           const highlighted = Boolean(forfait.badge);
           const surDevis = forfait.prix === null;
           const isSelected = selected.has(forfait.id);
 
           return (
+            <Reveal key={forfait.id} delay={index * 70}>
             <div
-              key={forfait.id}
-              className={`relative flex flex-col border p-6 transition-colors ${
+              className={`relative flex h-full flex-col border p-6 transition-colors ${
                 highlighted
                   ? "border-accent bg-surface"
                   : isSelected
@@ -81,7 +83,7 @@ export function ForfaitsGrid({ forfaits }: { forfaits: Forfait[] }) {
                       à partir de
                     </span>
                     <span className="font-heading text-3xl">
-                      {forfait.prix}&nbsp;€{" "}
+                      <Counter value={forfait.prix ?? 0} suffix=" €" />{" "}
                       <span className="text-xs font-normal text-muted">
                         TTC
                       </span>
@@ -102,6 +104,7 @@ export function ForfaitsGrid({ forfaits }: { forfaits: Forfait[] }) {
                 {surDevis ? "Demander un devis" : "Réserver"}
               </Button>
             </div>
+            </Reveal>
           );
         })}
       </div>

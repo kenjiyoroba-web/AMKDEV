@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Cpu, Disc3, Flame, Fuel, Gauge, Wrench } from "lucide-react";
 import { Button, Container, Eyebrow, SectionHeading } from "@/components/ui";
+import { Reveal } from "@/components/Reveal";
 
 export const metadata: Metadata = {
   title: "Prestations | AMK Développement",
@@ -75,53 +76,54 @@ export default function PrestationsPage() {
 
           <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-5">
             {SERVICES.map((service, index) => (
-              <div
+              <Reveal
                 key={service.title}
-                className={`group relative flex flex-col overflow-hidden bg-background p-6 ${
-                  index === SERVICES.length - 1 ? "sm:col-span-2 lg:col-span-1" : ""
-                }`}
+                delay={index * 80}
+                className={index === SERVICES.length - 1 ? "sm:col-span-2 lg:col-span-1" : ""}
               >
-                {service.image ? (
-                  <>
-                    <Image
-                      src={service.image}
-                      alt=""
-                      fill
-                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-background/85 transition-colors duration-500 group-hover:bg-background/70" />
-                  </>
-                ) : null}
+                <div className="group relative flex h-full flex-col overflow-hidden bg-background p-6">
+                  {service.image ? (
+                    <>
+                      <Image
+                        src={service.image}
+                        alt=""
+                        fill
+                        sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-background/85 transition-colors duration-500 group-hover:bg-background/70" />
+                    </>
+                  ) : null}
 
-                <div className="relative flex flex-1 flex-col">
-                  <span className="flex h-12 w-12 items-center justify-center border border-border text-accent">
-                    <service.icon className="h-6 w-6" strokeWidth={1.5} />
-                  </span>
-                  <span className="mt-4 font-heading text-xs tracking-[0.2em] text-accent">
-                    {service.label}
-                  </span>
-                  <h3 className="mt-3 font-heading text-xl">{service.title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted normal-case">
-                    {service.description}
-                  </p>
-                  <ul className="mt-6 flex flex-col gap-3 border-t border-border pt-4">
-                    {service.items.map((item) => (
-                      <li
-                        key={item}
-                        className="flex items-start gap-2 text-sm text-foreground/80 normal-case"
-                      >
-                        <span className="mt-1 text-muted">—</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="relative flex flex-1 flex-col">
+                    <span className="flex h-12 w-12 items-center justify-center border border-border text-accent">
+                      <service.icon className="h-6 w-6" strokeWidth={1.5} />
+                    </span>
+                    <span className="mt-4 font-heading text-xs tracking-[0.2em] text-accent">
+                      {service.label}
+                    </span>
+                    <h3 className="mt-3 font-heading text-xl">{service.title}</h3>
+                    <p className="mt-3 text-sm leading-relaxed text-muted normal-case">
+                      {service.description}
+                    </p>
+                    <ul className="mt-6 flex flex-col gap-3 border-t border-border pt-4">
+                      {service.items.map((item) => (
+                        <li
+                          key={item}
+                          className="flex items-start gap-2 text-sm text-foreground/80 normal-case"
+                        >
+                          <span className="mt-1 text-muted">—</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
-              </div>
+              </Reveal>
             ))}
           </div>
 
-          <div className="mt-12 border border-accent/40 bg-accent-soft p-8 lg:p-10">
+          <Reveal className="mt-12 border border-accent/40 bg-accent-soft p-8 lg:p-10">
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.3fr_auto_1fr] lg:items-center">
               <div>
                 <Eyebrow>Carburant · Superéthanol</Eyebrow>
@@ -165,9 +167,9 @@ export default function PrestationsPage() {
                 ))}
               </ul>
             </div>
-          </div>
+          </Reveal>
 
-          <div className="mt-12 flex flex-col items-start justify-between gap-8 border border-accent/40 bg-accent-soft px-8 py-10 sm:flex-row sm:items-center">
+          <Reveal className="mt-12 flex flex-col items-start justify-between gap-8 border border-accent/40 bg-accent-soft px-8 py-10 sm:flex-row sm:items-center">
             <div>
               <h2 className="text-2xl font-bold leading-tight sm:text-3xl">
                 Une prestation sur mesure ?
@@ -180,7 +182,7 @@ export default function PrestationsPage() {
             <Button href="/contact" variant="primary" className="shrink-0">
               Demander un devis
             </Button>
-          </div>
+          </Reveal>
         </Container>
       </section>
     </>

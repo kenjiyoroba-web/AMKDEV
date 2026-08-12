@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Clock, ExternalLink, MapPin, Phone } from "lucide-react";
 import { Container, SectionHeading } from "@/components/ui";
 import { ContactForm } from "@/components/ContactForm";
+import { Reveal } from "@/components/Reveal";
 
 export const metadata: Metadata = {
   title: "Contact | AMK Développement",
@@ -52,7 +53,7 @@ export default async function ContactPage({
       <section>
         <Container className="py-16 lg:py-24">
           <div className="grid grid-cols-1 gap-16 lg:grid-cols-3">
-            <div className="lg:col-span-1">
+            <Reveal className="lg:col-span-1">
               <div className="flex flex-col gap-4 text-sm">
                 <a
                   href="tel:+33973161543"
@@ -104,9 +105,9 @@ export default async function ContactPage({
                   </span>
                 </div>
               </a>
-            </div>
+            </Reveal>
 
-            <div className="lg:col-span-2">
+            <Reveal className="lg:col-span-2" delay={100}>
               <ContactForm
                 defaultSujet={sujet ?? ""}
                 defaultMarque={marque ?? ""}
@@ -114,7 +115,7 @@ export default async function ContactPage({
                 defaultAnnee={annee ?? ""}
                 defaultMotorisation={motorisation ?? ""}
               />
-            </div>
+            </Reveal>
           </div>
         </Container>
       </section>
