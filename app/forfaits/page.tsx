@@ -28,7 +28,7 @@ export default async function ForfaitsPage() {
 
   return (
     <>
-      <section className="relative overflow-hidden border-b border-border">
+      <section className="relative min-h-[420px] overflow-hidden border-b border-border lg:min-h-[560px]">
         <Image
           src="/forfaits-pieces.jpg"
           alt="Pièces performance prêtes au montage à l'atelier AMK Développement"
@@ -39,7 +39,7 @@ export default async function ForfaitsPage() {
         />
         <div className="absolute inset-0 bg-background/75" />
 
-        <Container className="relative py-20 lg:py-28">
+        <Container className="relative flex min-h-[420px] items-center py-20 lg:min-h-[560px] lg:py-28">
           <SectionHeading
             eyebrow="Forfaits atelier"
             title="Des tarifs clairs, annoncés avant l'intervention"
