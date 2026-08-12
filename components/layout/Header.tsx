@@ -33,17 +33,17 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-background">
       <div className="hidden border-b border-border sm:block">
-        <Container className="flex h-10 items-center justify-between text-xs text-muted">
+        <Container className="flex h-12 items-center justify-between text-sm text-muted">
           <div className="flex items-center gap-6">
             <span className="flex items-center gap-2">
-              <Clock className="h-3.5 w-3.5 text-accent" />
+              <Clock className="h-4 w-4 text-accent" />
               Lun&nbsp;–&nbsp;Ven&nbsp;: 9h30 – 12h00 | 14h30 – 18h00
             </span>
             <a
               href="tel:+33973161543"
               className="flex items-center gap-2 hover:text-foreground"
             >
-              <Phone className="h-3.5 w-3.5 text-accent" />
+              <Phone className="h-4 w-4 text-accent" />
               09 73 16 15 43
             </a>
           </div>
@@ -52,9 +52,10 @@ export default function Header() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="AMK Développement sur Instagram"
-            className="text-muted hover:text-accent"
+            className="flex items-center gap-2 text-muted hover:text-accent"
           >
-            <InstagramIcon className="h-3.5 w-3.5" />
+            Suivez-nous sur
+            <InstagramIcon className="h-4 w-4" />
           </a>
         </Container>
       </div>
