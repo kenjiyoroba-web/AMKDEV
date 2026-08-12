@@ -56,7 +56,7 @@ export default async function Home() {
         <div className="hero-grid pointer-events-none absolute inset-0" />
 
         <Container className="relative grid grid-cols-1 gap-16 py-16 lg:grid-cols-2 lg:items-start lg:py-24">
-          <div>
+          <div className="animate-slide-in-left">
             <Eyebrow>Préparateur automobile · Reprogrammation &amp; mécanique</Eyebrow>
 
             <h1 className="mt-6 text-5xl font-bold leading-[1.08] sm:text-6xl">
@@ -89,7 +89,7 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="border border-border bg-surface">
+          <div className="animate-slide-in-right border border-border bg-surface">
             <div className="relative h-64 w-full overflow-hidden sm:h-72">
               {featured?.image_url ? (
                 <Image
